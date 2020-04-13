@@ -15,19 +15,29 @@ class Graph:
         """
         Add a vertex to the graph.
         """
-        pass  # TODO
+        # We don't know where the edges are, so we just create an empty set
+        self.vertices[vertex_id] = set()
 
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
-        pass  # TODO
+        # check if the edges exist
+        if v1 in self.vertices and v2 in self.vertices:
+            # Add the edge cases
+            self.vertices[v1].add(v2)
+        else:
+            print("ERROR: Vertex not found")
 
     def get_neighbors(self, vertex_id):
         """
         Get all neighbors (edges) of a vertex.
         """
-        pass  # TODO
+        if vertex_id in self.vertices:
+            return self.vertices[vertex_id]
+        else:
+            # Might want to raise an exception here instead
+            return None
 
     def bft(self, starting_vertex):
         """
