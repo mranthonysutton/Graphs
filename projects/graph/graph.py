@@ -9,25 +9,24 @@ class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
 
     def __init__(self):
-        self.vertices = {}
+        self.vertices = {}  # This is our adjacency list
 
     def add_vertex(self, vertex_id):
         """
         Add a vertex to the graph.
         """
-        # We don't know where the edges are, so we just create an empty set
         self.vertices[vertex_id] = set()
 
     def add_edge(self, v1, v2):
         """
-        Add a directed edge to the graph.
+        Add a directed edge to the graph from v1 to v2
         """
-        # check if the edges exist
+        # Check if they exist
         if v1 in self.vertices and v2 in self.vertices:
-            # Add the edge cases
+            # Add the edge
             self.vertices[v1].add(v2)
         else:
-            print("ERROR: Vertex not found")
+            print("ERROR ADDING EDGE: Vertex not found")
 
     def get_neighbors(self, vertex_id):
         """
@@ -36,7 +35,6 @@ class Graph:
         if vertex_id in self.vertices:
             return self.vertices[vertex_id]
         else:
-            # Might want to raise an exception here instead
             return None
 
     def bft(self, starting_vertex):
@@ -44,6 +42,27 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
+        # Create a q and enqueue starting vertex
+        qq = Queue()
+        qq.enqueue([starting_vertex])
+        # Create a set of traversed vertices
+        visited = set()
+        # While queue is not empty:
+        while qq.size() > 0:
+            # dequeue/pop the first vertex
+            path = qq.dequeue()
+            # if not visited
+            if path[-1] not in visited:
+                # DO THE THING!!!!!!!
+                print(path[-1])
+                # mark as visited
+                visited.add(path[-1])
+                # enqueue all neightbors
+                for next_vert in self.get_neighbors(path[-1]):
+                    new_path = list(path)
+                    new_path.append(next_vert)
+                    qq.enqueue(new_path)
+
         pass  # TODO
 
     def dft(self, starting_vertex):
