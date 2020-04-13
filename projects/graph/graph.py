@@ -35,7 +35,7 @@ class Graph:
         if vertex_id in self.vertices:
             return self.vertices[vertex_id]
         else:
-            return None
+            raise Exception("ID not found in vertices")
 
     def bft(self, starting_vertex):
         """
@@ -45,32 +45,53 @@ class Graph:
         # Create a q and enqueue starting vertex
         qq = Queue()
         qq.enqueue([starting_vertex])
+
         # Create a set of traversed vertices
         visited = set()
         # While queue is not empty:
+
         while qq.size() > 0:
             # dequeue/pop the first vertex
             path = qq.dequeue()
+
             # if not visited
             if path[-1] not in visited:
                 # DO THE THING!!!!!!!
                 print(path[-1])
                 # mark as visited
                 visited.add(path[-1])
-                # enqueue all neightbors
+
+                # enqueue all neighbors
                 for next_vert in self.get_neighbors(path[-1]):
                     new_path = list(path)
                     new_path.append(next_vert)
                     qq.enqueue(new_path)
-
-        pass  # TODO
 
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        # Create a stack and add the starting vertex
+        stack = Stack()
+        stack.push(starting_vertex)
+
+        # keeps track of which sets have been visited
+        visited = set()
+
+        # While the size is greater than 0
+        while stack.size() > 0:
+            # Grabs the last item
+            current_item = stack.pop()
+
+            # if the last item is not in the stack, adds to the visited set
+            if current_item not in visited:
+                print(current_item)
+                visited.add(current_item)
+
+                # Continues to run through this process, adding all neighbors to the stack
+                for neighbor in self.get_neighbors(current_item):
+                    stack.push(neighbor)
 
     def dft_recursive(self, starting_vertex):
         """
