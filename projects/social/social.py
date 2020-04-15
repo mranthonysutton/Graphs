@@ -1,4 +1,5 @@
 import random
+from util import Queue
 
 
 class User:
@@ -80,7 +81,23 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        # Create a queue for BFS
+        queue = Queue()
+        queue.enqueue([user_id])
+
+        # While items are in the queue
+        while queue.size() > 0:
+            path = queue.dequeue()
+
+            if not visited.get(path[-1], None):
+                visited[path[-1]] = path
+
+                for friend in self.friendships[path[-1]]:
+                    friend_path = list(path)
+                    friend_path.append(friend)
+                    queue.enqueue(friend_path)
+
         return visited
 
 
