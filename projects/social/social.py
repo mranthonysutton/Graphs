@@ -82,6 +82,7 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
 
+        """
         # Create a queue for BFS
         queue = Queue()
         queue.enqueue([user_id])
@@ -99,11 +100,43 @@ class SocialGraph:
                     queue.enqueue(friend_path)
 
         return visited
+        """
+
+        # Shortest path lets us know that we want to do a BFS
+        # Extended network lets us know we want to use a traversal on a connected component
+
+        # How are we going to build a graph?
+        # Start at a given user_id -> BFS -> return the path to each friend
+
+        # Create queue & enqueue the path
+        queue = Queue()
+        queue.enqueue([user_id])
+
+        # Add to the visited queue while queue is not empty
+        while queue.size() > 0:
+            # dequeue the first path
+            path = queue.dequeue()
+
+            last_item = path[-1]
+
+            # if not visited -> add to visited
+            if last_item not in visited:
+                visited[last_item] = path
+
+                # for each friend -> add the friend (neighbor) -> copy path & enqueue
+                for neighbor in self.friendships[last_item]:
+                    new_path = path.copy()
+                    new_path.append(neighbor)
+                    queue.enqueue(new_path)
+
+        return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
+    print("FRIENDSHIPS")
     print(sg.friendships)
     connections = sg.get_all_social_paths(1)
+    print("CONNECTIONS")
     print(connections)
