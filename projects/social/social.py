@@ -1,6 +1,11 @@
+import random
+from util import Queue
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -44,9 +49,27 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
-        # Add users
+        # Add users -> num_users times
 
         # Create friendships
+        for i in range(0, num_users):
+            self.add_user(f"User {i + 1}")
+
+        # Generate all friendship combinations
+        possible_friendships = []
+
+        # Avoid duplicates by making sure first num is smaller than second num
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                possible_friendships.append((user_id, friend_id))
+
+        # Shuffle all possible friendships
+        random.shuffle(possible_friendships)
+
+        # Create for first X pair x is total // 2
+        for i in range(num_users * avg_friendships // 2):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -58,13 +81,69 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        """
+        # Create a queue for BFS
+        queue = Queue()
+        queue.enqueue([user_id])
+
+        # While items are in the queue
+        while queue.size() > 0:
+            path = queue.dequeue()
+
+            if not visited.get(path[-1], None):
+                visited[path[-1]] = path
+
+                for friend in self.friendships[path[-1]]:
+                    friend_path = list(path)
+                    friend_path.append(friend)
+                    queue.enqueue(friend_path)
+
+        return visited
+        """
+
+        # Shortest path lets us know that we want to do a BFS
+        # Extended network lets us know we want to use a traversal on a connected component
+
+        # How are we going to build a graph?
+        # Start at a given user_id -> BFS -> return the path to each friend
+
+        # Create queue & enqueue the path
+        queue = Queue()
+        queue.enqueue([user_id])
+
+        # Add to the visited queue while queue is not empty
+        while queue.size() > 0:
+            # dequeue the first path
+            path = queue.dequeue()
+
+            last_item = path[-1]
+
+            # if not visited -> add to visited
+            if last_item not in visited:
+                visited[last_item] = path
+
+                # for each friend -> add the friend (neighbor) -> copy path & enqueue
+                for neighbor in self.friendships[last_item]:
+                    new_path = path.copy()
+                    new_path.append(neighbor)
+                    queue.enqueue(new_path)
+
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
-    print(sg.friendships)
+    sg.populate_graph(1000, 1)
+    # print("FRIENDSHIPS")
+    # print(sg.friendships)
     connections = sg.get_all_social_paths(1)
-    print(connections)
+    # print("CONNECTIONS")
+    # print(connections)
+
+    total_social_paths = 0
+    for user_id in connections:
+        total_social_paths += len(connections[user_id])
+
+    print(
+        f"Average length of social path is {total_social_paths / len(connections)}")
